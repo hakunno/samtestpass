@@ -6,16 +6,15 @@ require 'phpmailer/src/Exception.php';
 require 'phpmailer/src/PHPMailer.php';
 require 'phpmailer/src/SMTP.php';
 
-session_start(); // Start the session to store the verification code
+session_start(); 
 
 if (isset($_POST["send"])) {
     $mail = new PHPMailer(true);
 
     try {
-        // Generate a random 6-digit verification code
+
         $verificationCode = rand(100000, 999999);
 
-        // Store the code in session for later verification
         $_SESSION['verification_code'] = $verificationCode;
 
         $subject = "Your Verification Code";
@@ -24,12 +23,12 @@ if (isset($_POST["send"])) {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'hidalgosapartment@gmail.com'; // Your Gmail
-        $mail->Password = 'sgqgqejxbhlccnvw'; // Gmail app password
+        $mail->Username = 'hidalgosapartment@gmail.com'; 
+        $mail->Password = 'sgqgqejxbhlccnvw'; 
         $mail->SMTPSecure = 'ssl';
         $mail->Port = 465;
 
-        $mail->setFrom('hidalgosapartment@gmail.com'); // Your Gmail
+        $mail->setFrom('hidalgosapartment@gmail.com');
         $mail->addAddress($_POST["email"]);
 
         $mail->isHTML(true);
@@ -38,7 +37,6 @@ if (isset($_POST["send"])) {
 
         $mail->send();
 
-        // Display the form to input the verification code
         echo "
         <h3>Email Sent Successfully!</h3>
         <p>Please enter the verification code sent to your email:</p>
