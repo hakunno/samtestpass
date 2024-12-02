@@ -1,30 +1,35 @@
 <?php
-include 'db.php';
 session_start();
+include 'db.php'; 
 
 if (isset($_POST['login'])) {
-    $email = trim(mysqli_real_escape_string($conn, $_POST['email']));
-    $password = trim(mysqli_real_escape_string($conn, $_POST['password']));
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $password = mysqli_real_escape_string($conn, $_POST['password']);  
 
     $query = "SELECT * FROM users WHERE email = '$email'";
     $result = mysqli_query($conn, $query);
 
-    if (mysqli_num_rows($result) === 1) {
+    if (mysqli_num_rows($result) == 1) {
         $user = mysqli_fetch_assoc($result);
+        $hashedPassword = $user['password']; 
 
-        if ($password === $user['password']) {
-            $_SESSION['email'] = $user['email'];
+        if (password_verify($password, $hashedPassword)) {
+
+            $_SESSION['email'] = $email;
+
             echo "
             <script>
                 alert('Login successful!');
-                window.location.href = 'index.php'; // Redirect to dashboard or desired page
+                window.location.href = 'index.php';  // Redirect to dashboard
             </script>
             ";
         } else {
-            echo "<script>alert('Incorrect password!');</script>";
+            echo "<script>alert('Invalid password. Please try again.');</script>";
+
+
         }
     } else {
-        echo "<script>alert('Email not found!');</script>";
+        echo "<script>alert('No account found with that email. Please sign up.');</script>";
     }
 }
 ?>
@@ -40,14 +45,14 @@ if (isset($_POST['login'])) {
     <h2>Login</h2>
     <form method="post" action="">
         <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required>
-        <br>
+        <input type="email" name="email" id="email" required><br>
+        
         <label for="password">Password:</label>
-        <input type="password" name="password" id="password" required>
-        <br>
-        <button type="submit" name="login">Log In</button>
-        <p><a href="forgotpass.php">Forgot Password?</a></p>
-        <a href="index.php">Back</a>
+        <input type="password" name="password" id="password" required><br><br>
+        
+        <button type="submit" name="login">Login</button><br><br>
+        <a href="forgotpassword.php">Forgot Password?</a><br>
+        <a href="signup.php">Sign Up</a>
     </form>
 </body>
 </html>
